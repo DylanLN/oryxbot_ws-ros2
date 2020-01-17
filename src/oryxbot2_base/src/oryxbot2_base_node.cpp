@@ -132,7 +132,7 @@ int main(int argc, char **argv)
     		publisher->publish(my_data);
         }
 
-	rclcpp::spin_some(node);
+	    rclcpp::spin_some(node);
         loop_rate.sleep();
     }
     modbus_close(mb);
