@@ -237,7 +237,7 @@ int main(int argc, char * argv[])
     output_angle_max=180;;
 
     scan_pub = node_handle->create_publisher<sensor_msgs::msg::LaserScan>("scan",10);
-    RCLCPP_INFO(node_handle->get_logger(),"RPLIDAR running on ROS package rplidar_ros. SDK Version:"RPLIDAR_SDK_VERSION"");
+    //RCLCPP_INFO(node_handle->get_logger(),"RPLIDAR running on ROS package rplidar_ros. SDK Version:"RPLIDAR_SDK_VERSION"");
     u_result     op_result;
 
     // create the driver instance
