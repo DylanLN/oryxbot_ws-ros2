@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(oryxbot2_msgs)
+project(tutorials_service)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -17,15 +17,15 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
 find_package(rosidl_typesupport_c REQUIRED) 
 find_package(builtin_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(oryxbot2_msgs REQUIRED)
+find_package(tutorials_service REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -39,12 +39,19 @@ if(BUILD_TESTING)
 endif()
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/Cardata.msg"
-  "msg/Carcmd.msg"
-
   "srv/SrvTutorial.srv"
   DEPENDENCIES builtin_interfaces geometry_msgs std_msgs
 )
+
+include_directories(include)
+
+add_executable(service_server src/service_server.cpp)
+ament_target_dependencies(service_server rclcpp std_msgs oryxbot2_msgs tutorials_service)
+
+  install(TARGETS 
+    service_server
+    EXPORT export_${PROJECT_NAME}
+    DESTINATION lib/${PROJECT_NAME})
 
 ament_export_dependencies(rosidl_default_runtime)
 ament_package()
