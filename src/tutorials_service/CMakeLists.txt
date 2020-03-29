@@ -25,7 +25,6 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 
 find_package(oryxbot2_msgs REQUIRED)
-find_package(tutorials_service REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -46,10 +45,13 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 include_directories(include)
 
 add_executable(service_server src/service_server.cpp)
-ament_target_dependencies(service_server rclcpp std_msgs oryxbot2_msgs tutorials_service)
+ament_target_dependencies(service_server rclcpp std_msgs oryxbot2_msgs)
+add_executable(service_client src/service_client.cpp)
+ament_target_dependencies(service_client rclcpp std_msgs oryxbot2_msgs)
 
-  install(TARGETS 
+  install(TARGETS
     service_server
+    service_client
     EXPORT export_${PROJECT_NAME}
     DESTINATION lib/${PROJECT_NAME})
 
