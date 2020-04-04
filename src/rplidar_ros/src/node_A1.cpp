@@ -198,43 +198,24 @@ int main(int argc, char * argv[])
     bool angle_compensate = true;
     float max_distance = 8.0;
     int angle_compensate_multiple = 1;//it stand of angle compensate at per 1 degree
-
-    //以下读取参数，暂时未实现
-	// auto node_param = rclcpp::Node::make_shared("set_rplidar_node");
-    // node_param->declare_parameter("serial_port");
-    // node_param->declare_parameter("serial_baudrate");
-    // node_param->declare_parameter("frame_id");
-    // node_param->declare_parameter("inverted");
-    // node_param->declare_parameter("angle_compensate");
-    // node_param->declare_parameter("scan_mode");
-    // node_param->declare_parameter("output_angle_min");
-    // node_param->declare_parameter("output_angle_max");
-    // auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(node_param);
-    // while (!parameters_client->wait_for_service(1s)) {
-    //     if (!rclcpp::ok()) {
-    //     RCLCPP_ERROR(node_param->get_logger(), "Interrupted while waiting for the service. Exiting.");
-    //     return 0;
-    //     }
-    //     RCLCPP_INFO(node_param->get_logger(), "service not available, waiting again...");
-    // }
-
-    // rclcpp::Parameter<std::string>("serial_port",serial_port,"/dev/ttyUSB0");
-    // rclcpp::Parameter<int>("serial_baudrate",serial_baudrate,115200);
-    // rclcpp::Parameter<std::string>("frame_id",frame_id,"laser_radar_Link");
-    // rclcpp::Parameter<bool>("inverted",inverted,false);
-    // rclcpp::Parameter<bool>("angle_compensate",angle_compensate,false);
-    // rclcpp::Parameter<std::string>("scan_mode",scan_mode,std::string());
-    // rclcpp::Parameter<int>("output_angle_min",output_angle_min,-180);
-    // rclcpp::Parameter<int>("output_angle_max",output_angle_max,180);
-
-    //参数设置，手动编译设置
     std::string scan_mode;
-    serial_port="/dev/ttyUSB0";
-    frame_id="laser_radar_Link";
-    inverted=false;
-    angle_compensate=true;
-    output_angle_min=-180;
-    output_angle_max=180;;
+
+    node_handle->declare_parameter("serial_port");
+    node_handle->declare_parameter("serial_baudrate");
+    node_handle->declare_parameter("frame_id");
+    node_handle->declare_parameter("inverted");
+    node_handle->declare_parameter("angle_compensate");
+    node_handle->declare_parameter("output_angle_min");
+    node_handle->declare_parameter("output_angle_max");
+
+    node_handle->get_parameter_or<std::string>("serial_port", serial_port, "/dev/ttyUSB0");
+    node_handle->get_parameter_or<int>("serial_baudrate", serial_baudrate, 115200/*256000*/);//ros run for A1 A2, change to 256000 if A3
+    node_handle->get_parameter_or<std::string>("frame_id", frame_id, "laser_frame");
+    node_handle->get_parameter_or<bool>("inverted", inverted, false);
+    node_handle->get_parameter_or<bool>("angle_compensate", angle_compensate, false);
+    node_handle->get_parameter_or<std::string>("scan_mode", scan_mode, std::string());
+    node_handle->get_parameter_or<int>("output_angle_min",output_angle_min,-180);
+    node_handle->get_parameter_or<int>("output_angle_max",output_angle_max,180);
 
     scan_pub = node_handle->create_publisher<sensor_msgs::msg::LaserScan>("scan",10);
     //RCLCPP_INFO(node_handle->get_logger(),"RPLIDAR running on ROS package rplidar_ros. SDK Version:"RPLIDAR_SDK_VERSION"");

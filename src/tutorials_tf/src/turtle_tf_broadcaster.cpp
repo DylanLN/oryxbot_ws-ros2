@@ -39,7 +39,7 @@ int main(int argc, char** argv)
     //获得小海龟的名字
     if (argc != 2)
     {
-        RCLCPP_ERROR(node_handle->get_logger(), "error Exiting");
+        RCLCPP_ERROR(node_handle->get_logger(), "error Exiting %d",argc);
         return -1;
     };
     turtle_name = argv[1];
