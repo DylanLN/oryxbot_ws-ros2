@@ -48,7 +48,7 @@ include_directories(
 
 
 add_executable(rplidarNode_A1 src/node_A1.cpp ${RPLIDAR_SDK_SRC})
-ament_target_dependencies(rplidarNode_A1 rclcpp std_msgs sensor_msgs)
+ament_target_dependencies(rplidarNode_A1 rclcpp std_msgs std_srvs sensor_msgs)
 
 install(TARGETS
 rplidarNode_A1

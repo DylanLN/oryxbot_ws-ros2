@@ -3,7 +3,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
-#include "std_srvs/srv/empty.h"
+#include "std_srvs/srv/empty.hpp"
 #include "rplidar.h"
 #include <chrono>
 #include <memory>
@@ -23,40 +23,6 @@ rclcpp::Node::SharedPtr node_handle = nullptr;
 using namespace rp::standalone::rplidar;
 
 RPlidarDriver * drv = NULL;
-
-// class rplidarPublisher : public rclcpp::Node
-// {
-// public:
-//     rplidarPublisher()
-//     : Node("rplidar_node"), count_(0)
-//     {
-//         publisher_ = this->create_publisher<sensor_msgs::msg::LaserScan>("scan",1000);
-//         RCLCPP_INFO(node_handle->get_logger(),this->get_logger(), "RPLIDAR running on ROS package rplidar_ros. SDK Version:"RPLIDAR_SDK_VERSION"");
-//         u_result     op_result;
-//     }
-// private:
-//     void timer_callback()
-//     {
-//         auto message = std_msgs::msg::Int32();
-//         message.data = count_;
-//         count_++;
-//         publisher_->publish(message);
-//     }
-// 	rclcpp::TimerBase::SharedPtr timer_;
-// 	rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr publisher_;
-// 	size_t count_;
-
-// public:
-//     std::string serial_port;
-//     int serial_baudrate = 115200;
-//     std::string frame_id;
-//     bool inverted = false;
-//     bool angle_compensate = true;
-//     float max_distance = 8.0;
-//     int angle_compensate_multiple = 1;//it stand of angle compensate at per 1 degree
-//     std::string scan_mode;
-
-// };
 
 rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub;//rel_vel
 void publish_scan(rplidar_response_measurement_node_hq_t *nodes,
@@ -184,7 +150,25 @@ static float getAngle(const rplidar_response_measurement_node_hq_t& node)
     return node.angle_z_q14 * 90.f / 16384.f;
 }
 
+void stop_motor(const std::shared_ptr<std_srvs::srv::Empty::Request> request,
+  const std::shared_ptr<std_srvs::srv::Empty::Response> response
+)
+{
+    RCLCPP_INFO(node_handle->get_logger(),"Stop motor");
+    drv->stop();
+    drv->stopMotor();
+    return;
+}
 
+void start_motor(const std::shared_ptr<std_srvs::srv::Empty::Request> request,
+  const std::shared_ptr<std_srvs::srv::Empty::Response> response
+)
+{
+    RCLCPP_INFO(node_handle->get_logger(),"Start motor");
+    drv->startMotor();
+    drv->startScan(0,1);
+    return;
+}
 
 int main(int argc, char * argv[])
 {
@@ -247,6 +231,9 @@ int main(int argc, char * argv[])
         RPlidarDriver::DisposeDriver(drv);
         return -1;
     }
+    
+    auto stop_motor_service = node_handle->create_service<std_srvs::srv::Empty>("stop_motor", stop_motor);
+    auto start_motor_service = node_handle->create_service<std_srvs::srv::Empty>("start_motor", start_motor);
     drv->startMotor();
 
     RplidarScanMode current_scan_mode;
